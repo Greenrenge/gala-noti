@@ -33,6 +33,11 @@ async function main() {
   }
   const task = async () => {
     const [isSuccess, errorMsg] = await checker()
+    console.log(
+      "CHECK ON ",
+      new Date().toISOString(),
+      ` isSuccess=${isSuccess}, errorMsg=${errorMsg}`,
+    )
     if (!isSuccess) {
       send(`ตื่นๆๆๆๆ มีเรื่องแล้ว ${errorMsg}`).catch((err) => {
         console.log("cannot send the message to line noti")
@@ -48,7 +53,7 @@ async function main() {
   )
 
   job.start()
-  console.log("job started")
+  console.log("job started", process.env.LINE_NOTIFY_TOKEN)
 }
 
 main().catch((err) => console.error(err.toString()))
