@@ -3,7 +3,10 @@ const { send } = require("./fireNoti")
 const get = require("lodash/get")
 
 var CronJob = require("cron").CronJob
-
+/**
+ *
+ * {"timestamp":"2022-02-08T05:20:37.739Z","level":"\u001b[31merror\u001b[39m","message":"caught err in stats: Error: Request failed with status code 502"}
+ */
 async function main() {
   const checker = async function () {
     try {
@@ -14,6 +17,18 @@ async function main() {
       }
       try {
         const parsed = JSON.parse(data)
+
+        if (!get(parsed, "summary")) {
+          //restart needed
+          send(
+            `node restart needed \n${Object.entries(parsed)
+              .map(([k, v]) => ` [${k}]=${v} `)
+              .join("\n")}`,
+          )
+          execute(`systemctl restart gala-node`).then(task)
+          return
+        }
+
         if (+get(parsed, "summary.nodesOnline", 0) !== 1) {
           return [false, "NODE IS OFFLINE !!!!!!!"]
         }
