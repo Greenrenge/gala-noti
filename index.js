@@ -1,14 +1,12 @@
 const { execute, exec } = require("./cmd")
 const { send } = require("./fireNoti")
 const get = require("lodash/get")
-const { JSONFile, Low } = require("lowdb")
-const { dirname, join } = require("path")
-const { fileURLToPath } = require("url")
+const lowdb = require("lowdb")
+const FileSync = require("lowdb/adapters/FileSync")
+const { join } = require("path")
 
-// Use JSON file for storage
-const file = join(__dirname, "db.json")
-const adapter = new JSONFile(file)
-const db = new Low(adapter)
+const adapter = new FileSync(join(__dirname, "db.json"))
+const db = lowdb(adapter)
 
 var CronJob = require("cron").CronJob
 /**
