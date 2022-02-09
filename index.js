@@ -45,6 +45,7 @@ async function rebootCheck() {
     await exec("gala-node config device", {
       echo: true,
       handler: (stdout) => {
+        console.log("handler", stdout)
         send(stdout)
       },
     })

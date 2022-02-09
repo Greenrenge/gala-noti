@@ -13,6 +13,7 @@ const execute = (command, options, onStdOut) => {
       childProcess.stdout.on("data", (data) => {
         stdout += data
         if (onStdOut) {
+          console.log("calling onStdOut")
           onStdOut(data)
         }
       })
