@@ -18,28 +18,28 @@ const states = {
   setHasReboot() {},
 }
 
-async function reboot() {
+async function rebootCheck() {
   await db.read()
-  try {
-    await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", {
-      echo: true,
-    })
-  } catch (err) {}
-  try {
-    await exec("sudo dbus-uuidgen | sudo tee /etc/machine-id", { echo: true })
-  } catch (err) {}
-  try {
-    await exec("sudo cp /etc/machine-id /var/lib/dbus/machine-id", {
-      echo: true,
-    })
-  } catch (err) {}
-  try {
-    if (!db.get("rebooted").value()) {
+  if (!db.get("rebooted").value()) {
+    try {
+      await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", {
+        echo: true,
+      })
+    } catch (err) {}
+    try {
+      await exec("sudo dbus-uuidgen | sudo tee /etc/machine-id", { echo: true })
+    } catch (err) {}
+    try {
+      await exec("sudo cp /etc/machine-id /var/lib/dbus/machine-id", {
+        echo: true,
+      })
+    } catch (err) {}
+    try {
       console.log("GONNA REBOOT")
       await db.set("rebooted", true).write()
       await exec("sudo reboot", { echo: true })
-    }
-  } catch (err) {
+    } catch (err) {}
+  } else {
     //already reboot then
     console.log("REBOOTED --> config device")
     await exec("gala-node config device", {
@@ -75,7 +75,7 @@ async function main() {
           //restart needed
           send(`node restart needed \n${JSON.stringify(data)}`)
 
-          await reboot()
+          await rebootCheck()
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
@@ -94,7 +94,7 @@ async function main() {
               .map(([k, v]) => ` [${k}]=${v} `)
               .join("\n")}`,
           )
-          await reboot()
+          await rebootCheck()
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
