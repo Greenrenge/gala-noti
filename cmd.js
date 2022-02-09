@@ -1,6 +1,6 @@
 const spawn = require("child_process").spawn
 
-const execute = (command, options) => {
+const execute = (command, options, onStdOut) => {
   const childProcess = spawn("bash", ["-c", command], options)
   return new Promise((resolve, reject) => {
     let stdout = ""
@@ -12,6 +12,9 @@ const execute = (command, options) => {
     if (childProcess.stdout) {
       childProcess.stdout.on("data", (data) => {
         stdout += data
+        if (onStdOut) {
+          onStdOut(data)
+        }
       })
     }
 
@@ -33,15 +36,22 @@ const execute = (command, options) => {
   })
 }
 
-const exec = (command, { capture = false, echo = false, cwd } = {}) => {
+const exec = (
+  command,
+  { capture = false, echo = false, cwd, handler } = {},
+) => {
   if (echo) {
     console.log(command)
   }
 
-  return execute(command, {
-    stdio: capture ? "pipe" : "inherit",
-    ...(cwd && { cwd }),
-  })
+  return execute(
+    command,
+    {
+      stdio: capture ? "pipe" : "inherit",
+      ...(cwd && { cwd }),
+    },
+    handler,
+  )
 }
 
 module.exports = {

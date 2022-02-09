@@ -1,12 +1,25 @@
 const { execute, exec } = require("./cmd")
 const { send } = require("./fireNoti")
 const get = require("lodash/get")
+const { JSONFile, Low } = require("lowdb")
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const { dirname, join } = require("path")
+const { fileURLToPath } = require("url")
+
+// Use JSON file for storage
+const file = join(__dirname, "db.json")
+const adapter = new JSONFile(file)
+const db = new Low(adapter)
 
 var CronJob = require("cron").CronJob
 /**
  *
  * {"timestamp":"2022-02-08T05:20:37.739Z","level":"\u001b[31merror\u001b[39m","message":"caught err in stats: Error: Request failed with status code 502"}
  */
+
+const states = {
+  setHasReboot() {},
+}
 
 async function reboot() {
   try {
@@ -23,8 +36,22 @@ async function reboot() {
     })
   } catch (err) {}
   try {
-    await exec("sudo reboot", { echo: true })
-  } catch (err) {}
+    if (!get(db.data, "rebooted")) {
+      db.data = { rebooted: true }
+      await db.write()
+      await exec("sudo reboot", { echo: true })
+    }
+  } catch (err) {
+    //already reboot then
+    await exec("gala-node config device", {
+      echo: true,
+      handler: (stdout) => {
+        send(stdout)
+      },
+    })
+    db.data = { rebooted: false }
+    await db.write()
+  }
 }
 
 async function main() {
@@ -48,7 +75,9 @@ async function main() {
         if (!get(parsedArr[0], "summary")) {
           //restart needed
           send(`node restart needed \n${JSON.stringify(data)}`)
-          await reboot()
+          await db.read()
+          db.data = db.data || { rebooted: false }
+          await reboot(db)
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
