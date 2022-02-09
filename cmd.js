@@ -8,7 +8,7 @@ const execute = (command, options, { onStdOut, noTimeout } = {}) => {
     if (!noTimeout) {
       timeout = setTimeout(() => {
         resolve({ code: 999, data: stdout })
-      }, 10000)
+      }, 100000)
     }
 
     if (childProcess.stdout) {
