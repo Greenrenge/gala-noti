@@ -35,12 +35,14 @@ async function reboot() {
   } catch (err) {}
   try {
     if (!get(db.data, "rebooted")) {
+      console.log("GONNA REBOOT")
       db.data = { rebooted: true }
       await db.write()
       await exec("sudo reboot", { echo: true })
     }
   } catch (err) {
     //already reboot then
+    console.log("REBOOTED --> config device")
     await exec("gala-node config device", {
       echo: true,
       handler: (stdout) => {
