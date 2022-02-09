@@ -74,9 +74,11 @@ async function main() {
         }
         return [true]
       } catch (err) {
+        console.log("error parse std ", err)
         return [false, "cannot parse the stdout"]
       }
     } catch (err) {
+      console.log("error command failed ", err)
       return [false, "process stopped or failed to run"]
     }
   }
@@ -89,7 +91,7 @@ async function main() {
     )
     if (!isSuccess) {
       send(`ตื่นๆๆๆๆ มีเรื่องแล้ว ${errorMsg}`).catch((err) => {
-        console.log("cannot send the message to line noti")
+        console.log("cannot send the message to line noti ", err)
       })
     }
   }
