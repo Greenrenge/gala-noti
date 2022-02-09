@@ -3,6 +3,10 @@ var qs = require("qs")
 
 module.exports = {
   send: (txt) => {
+    console.log(`[SENDING NOTI] ${txt}`)
+    if (!process.env.LINE_NOTIFY_TOKEN) {
+      return
+    }
     var config = {
       method: "post",
       url: "https://notify-api.line.me/api/notify",
