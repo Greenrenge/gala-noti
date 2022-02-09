@@ -85,7 +85,7 @@ async function main() {
           //   console.log("res", res)
           //   task()
           // })
-          return
+          return [false, "REBOOT DUE TO NOT FIND SUMMARY AT FIRST INDEX", true]
         }
       }
 
@@ -105,7 +105,7 @@ async function main() {
           //   console.log("res", res)
           //   task()
           // })
-          return
+          return [false, "REBOOT DUE TO NOT FIND SUMMARY", true]
         }
 
         console.log("json got normal", parsed)
@@ -130,20 +130,24 @@ async function main() {
     }
   }
   const task = async () => {
-    const [isSuccess, errorMsg] = await checker()
+    const [isSuccess, errorMsg, notSend] = (await checker()) || [
+      false,
+      "",
+      true,
+    ]
     console.log(
       "CHECK ON ",
       new Date().toISOString(),
       ` isSuccess=${isSuccess}, errorMsg=${errorMsg}`,
     )
-    if (!isSuccess) {
+    if (!isSuccess && !notSend) {
       send(`ตื่นๆๆๆๆ มีเรื่องแล้ว ${errorMsg}`).catch((err) => {
         console.log("cannot send the message to line noti ", err)
       })
     }
   }
   const job = new CronJob(
-    "0 * * * *", //every hour
+    "*/15 * * * *", //every 15 min
     task,
     null, //on completed
     true, //start
