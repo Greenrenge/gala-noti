@@ -1,4 +1,4 @@
-const { execute } = require("./cmd")
+const { execute, exec } = require("./cmd")
 const { send } = require("./fireNoti")
 const get = require("lodash/get")
 
@@ -7,6 +7,14 @@ var CronJob = require("cron").CronJob
  *
  * {"timestamp":"2022-02-08T05:20:37.739Z","level":"\u001b[31merror\u001b[39m","message":"caught err in stats: Error: Request failed with status code 502"}
  */
+
+async function reboot() {
+  await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", { echo: true })
+  await exec("sudo dbus-uuidgen | sudo tee /etc/machine-id", { echo: true })
+  await exec("sudo cp /etc/machine-id /var/lib/dbus/machine-id", { echo: true })
+  await exec("sudo reboot", { echo: true })
+}
+
 async function main() {
   const checker = async function () {
     try {
@@ -28,10 +36,11 @@ async function main() {
         if (!get(parsedArr[0], "summary")) {
           //restart needed
           send(`node restart needed \n${JSON.stringify(data)}`)
-          execute(`systemctl restart gala-node`).then((res) => {
-            console.log("res", res)
-            task()
-          })
+          await reboot()
+          // execute(`systemctl restart gala-node`).then((res) => {
+          //   console.log("res", res)
+          //   task()
+          // })
           return
         }
       }
@@ -46,7 +55,11 @@ async function main() {
               .map(([k, v]) => ` [${k}]=${v} `)
               .join("\n")}`,
           )
-          execute(`systemctl restart gala-node`).then(task)
+          await reboot()
+          // execute(`systemctl restart gala-node`).then((res) => {
+          //   console.log("res", res)
+          //   task()
+          // })
           return
         }
 
