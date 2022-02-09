@@ -5,7 +5,6 @@ const { JSONFile, Low } = require("lowdb")
 const { dirname, join } = require("path")
 const { fileURLToPath } = require("url")
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
 // Use JSON file for storage
 const file = join(__dirname, "db.json")
 const adapter = new JSONFile(file)
