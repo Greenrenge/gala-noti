@@ -28,7 +28,10 @@ async function main() {
         if (!get(parsedArr[0], "summary")) {
           //restart needed
           send(`node restart needed \n${JSON.stringify(data)}`)
-          execute(`systemctl restart gala-node`).then(task)
+          execute(`systemctl restart gala-node`).then((res) => {
+            console.log("res", res)
+            task()
+          })
           return
         }
       }
