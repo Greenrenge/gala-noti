@@ -46,8 +46,8 @@ async function rebootCheck() {
       echo: true,
       capture: true,
       handler: (stdout) => {
-        console.log("handler", stdout)
-        send(stdout)
+        console.log("handler", stdout.toString())
+        send(stdout.toString())
       },
     })
     await db.set("rebooted", false).write()
