@@ -1,13 +1,15 @@
 const spawn = require("child_process").spawn
 
-const execute = (command, options, onStdOut) => {
+const execute = (command, options, { onStdOut, noTimeout }) => {
   const childProcess = spawn("bash", ["-c", command], options)
   return new Promise((resolve, reject) => {
     let stdout = ""
-
-    const timeout = setTimeout(() => {
-      resolve({ code: 999, data: stdout })
-    }, 10000)
+    let timeout
+    if (!noTimeout) {
+      timeout = setTimeout(() => {
+        resolve({ code: 999, data: stdout })
+      }, 10000)
+    }
 
     if (childProcess.stdout) {
       childProcess.stdout.on("data", (data) => {
@@ -39,7 +41,7 @@ const execute = (command, options, onStdOut) => {
 
 const exec = (
   command,
-  { capture = false, echo = false, cwd, handler } = {},
+  { capture = false, echo = false, cwd, handler, noTimeout } = {},
 ) => {
   if (echo) {
     console.log(command)
@@ -51,7 +53,7 @@ const exec = (
       stdio: capture ? "pipe" : "inherit",
       ...(cwd && { cwd }),
     },
-    handler,
+    { onStdOut: handler, noTimeout },
   )
 }
 

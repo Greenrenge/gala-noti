@@ -45,6 +45,7 @@ async function rebootCheck() {
     await exec("gala-node config device", {
       echo: true,
       capture: true,
+      noTimeout: true,
       handler: (stdout) => {
         console.log("handler", stdout.toString())
         send(stdout.toString())
@@ -79,6 +80,7 @@ async function main() {
           try {
             await rebootCheck()
           } catch (err) {}
+          console.log("done reboot check#1")
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
@@ -98,12 +100,15 @@ async function main() {
               .join("\n")}`,
           )
           await rebootCheck()
+          console.log("done reboot check#2")
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
           // })
           return
         }
+
+        console.log("json got normal", parsed)
 
         if (+get(parsed, "summary.nodesOnline", 0) !== 1) {
           return [false, "NODE IS OFFLINE !!!!!!!"]
