@@ -2,10 +2,10 @@ const { execute, exec } = require("./cmd")
 const { send } = require("./fireNoti")
 const get = require("lodash/get")
 const { JSONFile, Low } = require("lowdb")
-const __dirname = dirname(fileURLToPath(import.meta.url))
 const { dirname, join } = require("path")
 const { fileURLToPath } = require("url")
 
+const __dirname = dirname(fileURLToPath(import.meta.url))
 // Use JSON file for storage
 const file = join(__dirname, "db.json")
 const adapter = new JSONFile(file)
