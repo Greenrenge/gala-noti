@@ -34,10 +34,9 @@ async function reboot() {
     })
   } catch (err) {}
   try {
-    if (!get(db.data, "rebooted")) {
+    if (!db.get("rebooted").value()) {
       console.log("GONNA REBOOT")
-      db.data = { rebooted: true }
-      await db.write()
+      await db.set("rebooted", true).write()
       await exec("sudo reboot", { echo: true })
     }
   } catch (err) {
@@ -49,12 +48,12 @@ async function reboot() {
         send(stdout)
       },
     })
-    db.data = { rebooted: false }
-    await db.write()
+    await db.set("rebooted", false).write()
   }
 }
 
 async function main() {
+  await db.defaults({ rebooted: false }).write()
   const checker = async function () {
     try {
       const { code, data } = await execute("gala-node stats")
@@ -75,9 +74,8 @@ async function main() {
         if (!get(parsedArr[0], "summary")) {
           //restart needed
           send(`node restart needed \n${JSON.stringify(data)}`)
-          await db.read()
-          db.data = db.data || { rebooted: false }
-          await reboot(db)
+
+          await reboot()
           // execute(`systemctl restart gala-node`).then((res) => {
           //   console.log("res", res)
           //   task()
