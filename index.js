@@ -22,6 +22,7 @@ const states = {
 }
 
 async function reboot() {
+  await db.read()
   try {
     await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", {
       echo: true,
