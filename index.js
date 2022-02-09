@@ -12,9 +12,27 @@ async function main() {
     try {
       const { code, data } = await execute("gala-node stats")
 
-      if (code != 0) {
+      if (code != 0 && code != 999) {
         return [false, "process exit with non-zero return"]
       }
+
+      if (code == 999) {
+        const parsedArr = data.split("\n").map((d) => {
+          try {
+            return JSON.parse(d)
+          } catch (err) {
+            return undefined
+          }
+        })
+
+        if (!get(parsedArr[0], "summary")) {
+          //restart needed
+          send(`node restart needed \n${JSON.stringify(data)}`)
+          execute(`systemctl restart gala-node`).then(task)
+          return
+        }
+      }
+
       try {
         const parsed = JSON.parse(data)
 

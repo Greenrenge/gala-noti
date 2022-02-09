@@ -5,6 +5,10 @@ const execute = (command, options) => {
   return new Promise((resolve, reject) => {
     let stdout = ""
 
+    const timeout = setTimeout(() => {
+      resolve({ code: 999, data: stdout })
+    }, 10000)
+
     childProcess.stdout.on("data", (data) => {
       stdout += data
     })
@@ -14,6 +18,10 @@ const execute = (command, options) => {
     })
 
     childProcess.on("close", function (code) {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+
       if (code > 0) {
         reject({ code: code, error: "Command failed with code " + code })
       } else {
