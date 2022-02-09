@@ -87,7 +87,7 @@ async function main() {
     true, //start
     "Asia/Bangkok",
   )
-
+  task()
   job.start()
   console.log("job started", process.env.LINE_NOTIFY_TOKEN)
 }
