@@ -4,7 +4,9 @@ const execute = (command, options) => {
   const childProcess = spawn("bash", ["-c", command], options)
   return new Promise((resolve, reject) => {
     let stdout = ""
-
+    if (!childProcess) {
+      console.log("failed to spawn ", childProcess)
+    }
     const timeout = setTimeout(() => {
       resolve({ code: 999, data: stdout })
     }, 10000)
