@@ -1,6 +1,6 @@
 const spawn = require("child_process").spawn
 
-const execute = (command, options, { onStdOut, noTimeout }) => {
+const execute = (command, options, { onStdOut, noTimeout } = {}) => {
   const childProcess = spawn("bash", ["-c", command], options)
   return new Promise((resolve, reject) => {
     let stdout = ""
