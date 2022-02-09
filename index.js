@@ -9,10 +9,22 @@ var CronJob = require("cron").CronJob
  */
 
 async function reboot() {
-  await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", { echo: true })
-  await exec("sudo dbus-uuidgen | sudo tee /etc/machine-id", { echo: true })
-  await exec("sudo cp /etc/machine-id /var/lib/dbus/machine-id", { echo: true })
-  await exec("sudo reboot", { echo: true })
+  try {
+    await exec("sudo rm /etc/machine-id /var/lib/dbus/machine-id", {
+      echo: true,
+    })
+  } catch (err) {}
+  try {
+    await exec("sudo dbus-uuidgen | sudo tee /etc/machine-id", { echo: true })
+  } catch (err) {}
+  try {
+    await exec("sudo cp /etc/machine-id /var/lib/dbus/machine-id", {
+      echo: true,
+    })
+  } catch (err) {}
+  try {
+    await exec("sudo reboot", { echo: true })
+  } catch (err) {}
 }
 
 async function main() {
