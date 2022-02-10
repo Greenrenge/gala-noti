@@ -1,6 +1,6 @@
 # works only on ubuntu
 
-first, you need to clone this repo by `git clone https://github.com/Greenrenge/gala-noti.git`, then ssh to your system as root and might clone it to `/root/gala-noti`
+first, you need to clone this repo by `git clone https://github.com/Greenrenge/gala-noti.git`, then ssh to your system as root and might clone it to `/root/gala-noti` (if you dont have git, install it via `sudo apt-get update` then  `sudo apt-get install git`)
 
 1. install gala-node by the official's guide
 2. install `node` by `apt install nodejs` command
