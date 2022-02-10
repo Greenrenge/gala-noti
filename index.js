@@ -141,13 +141,14 @@ async function main() {
       ` isSuccess=${isSuccess}, errorMsg=${errorMsg}`,
     )
     if (!isSuccess && !notSend) {
-      send(`ตื่นๆๆๆๆ มีเรื่องแล้ว ${errorMsg}`).catch((err) => {
+      send(`ERROR OCCURRED ==> ${errorMsg}`).catch((err) => {
         console.log("cannot send the message to line noti ", err)
       })
     }
   }
+
   const job = new CronJob(
-    "*/15 * * * *", //every 15 min
+    "*/30 * * * *", //every 30 min
     task,
     null, //on completed
     true, //start
@@ -155,7 +156,8 @@ async function main() {
   )
   task()
   job.start()
-  console.log("job started", process.env.LINE_NOTIFY_TOKEN)
+  console.log("job started", `lineToken=${process.env.LINE_NOTIFY_TOKEN} `)
+  send("gala-node just started")
 }
 
 main().catch((err) => console.error(err.toString()))

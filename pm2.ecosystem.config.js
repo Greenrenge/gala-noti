@@ -6,7 +6,7 @@ module.exports = {
       watch: false,
       env: {
         NODE_ENV: "production",
-        LINE_NOTIFY_TOKEN: "xxx",
+        LINE_NOTIFY_TOKEN: "<REPLACE YOUR TOKEN HERE>",
       },
     },
   ],
