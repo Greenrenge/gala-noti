@@ -7,6 +7,7 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         LINE_NOTIFY_TOKEN: "<REPLACE YOUR TOKEN HERE>",
+        AUTO_REBOOT: "false",
       },
     },
   ],

@@ -5,6 +5,8 @@ const lowdb = require("lowdb")
 const FileSync = require("lowdb/adapters/FileSync")
 const { join } = require("path")
 
+const enableAutoReboot = process.env.AUTO_REBOOT === "true"
+
 const adapter = new FileSync(join(__dirname, "db.json"))
 const db = lowdb(adapter)
 
@@ -36,11 +38,15 @@ async function rebootCheck() {
     } catch (err) {}
     try {
       console.log("GONNA REBOOT")
+      send(`node is going to reboot.....`)
       await db.set("rebooted", true).write()
       await exec("sudo reboot", { echo: true })
-    } catch (err) {}
+    } catch (err) {
+      send(`node error to reboot.....${err}`)
+    }
   } else {
     //already reboot then
+    send(`node has been rebooted`)
     console.log("REBOOTED --> config device")
     await exec("gala-node config device", {
       echo: true,
@@ -76,37 +82,21 @@ async function main() {
         })
         send(`node check stats failed due to \n${JSON.stringify(data)}`)
         return [false, "TIMEOUT", true]
-        // if (!get(parsedArr[0], "summary")) {
-        //   //restart needed
-        //   send(`node restart needed \n${JSON.stringify(data)}`)
-        //   try {
-        //     await rebootCheck()
-        //   } catch (err) {}
-        //   console.log("done reboot check#1")
-        //   // execute(`systemctl restart gala-node`).then((res) => {
-        //   //   console.log("res", res)
-        //   //   task()
-        //   // })
-        //   return [false, "REBOOT DUE TO NOT FIND SUMMARY AT FIRST INDEX", true]
-        // }
       }
 
       try {
         const parsed = JSON.parse(data)
 
         if (!get(parsed, "summary")) {
-          //restart needed
           send(
             `node restart needed \n${Object.entries(parsed)
               .map(([k, v]) => ` [${k}]=${v} `)
               .join("\n")}`,
           )
-          await rebootCheck()
+          if (enableAutoReboot) {
+            await rebootCheck()
+          }
           console.log("done reboot check#2")
-          // execute(`systemctl restart gala-node`).then((res) => {
-          //   console.log("res", res)
-          //   task()
-          // })
           return [false, "REBOOT DUE TO NOT FIND SUMMARY", true]
         }
 
@@ -150,7 +140,7 @@ async function main() {
   }
 
   const job = new CronJob(
-    "*/30 * * * *", //every 30 min
+    "*/15 * * * *", //every 15 min
     task,
     null, //on completed
     true, //start
