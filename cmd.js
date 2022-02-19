@@ -7,8 +7,12 @@ const execute = (command, options, { onStdOut, noTimeout } = {}) => {
     let timeout
     if (!noTimeout) {
       timeout = setTimeout(() => {
-        resolve({ code: 999, data: stdout })
-      }, 100000)
+        resolve({
+          code: 999,
+          data:
+            stdout || JSON.stringify({ error: "request timeout at 120sec" }),
+        })
+      }, 120000)
     }
 
     if (childProcess.stdout) {

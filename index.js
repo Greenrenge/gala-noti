@@ -66,6 +66,7 @@ async function main() {
       }
 
       if (code == 999) {
+        // timeout
         const parsedArr = data.split("\n").map((d) => {
           try {
             return JSON.parse(d)
@@ -73,20 +74,21 @@ async function main() {
             return undefined
           }
         })
-
-        if (!get(parsedArr[0], "summary")) {
-          //restart needed
-          send(`node restart needed \n${JSON.stringify(data)}`)
-          try {
-            await rebootCheck()
-          } catch (err) {}
-          console.log("done reboot check#1")
-          // execute(`systemctl restart gala-node`).then((res) => {
-          //   console.log("res", res)
-          //   task()
-          // })
-          return [false, "REBOOT DUE TO NOT FIND SUMMARY AT FIRST INDEX", true]
-        }
+        send(`node check stats failed due to \n${JSON.stringify(data)}`)
+        return [false, "TIMEOUT", true]
+        // if (!get(parsedArr[0], "summary")) {
+        //   //restart needed
+        //   send(`node restart needed \n${JSON.stringify(data)}`)
+        //   try {
+        //     await rebootCheck()
+        //   } catch (err) {}
+        //   console.log("done reboot check#1")
+        //   // execute(`systemctl restart gala-node`).then((res) => {
+        //   //   console.log("res", res)
+        //   //   task()
+        //   // })
+        //   return [false, "REBOOT DUE TO NOT FIND SUMMARY AT FIRST INDEX", true]
+        // }
       }
 
       try {
