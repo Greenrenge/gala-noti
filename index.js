@@ -118,7 +118,24 @@ async function main() {
       }
     } catch (err) {
       console.log("error command failed ", err)
-      return [false, "process stopped or failed to run"]
+      send("process stopped or failed to run maybe need to re-login")
+
+      // re-auth
+      await exec("gala-node config device", {
+        echo: true,
+        capture: true,
+        noTimeout: true,
+        handler: (stdout) => {
+          console.log("handler", stdout.toString())
+          send(stdout.toString())
+        },
+      })
+
+      return [
+        false,
+        "process stopped or failed to run maybe need to re-login",
+        true, // not send
+      ]
     }
   }
   const task = async () => {
