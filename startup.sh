@@ -1,5 +1,5 @@
 #!/bin/sh
 
-systemctl start gala-node
+gala-node start
 sleep 10
 pm2 resurrect
