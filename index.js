@@ -74,7 +74,7 @@ async function main() {
       //   console.log("error parse std ", err)
       //   return [false, "cannot parse the stdout"]
       // }
-    } catch (err) {
+    } catch (err) {}
     //   console.log("error command failed ", err)
     //   send("process stopped or failed to run maybe need to re-login")
 
