@@ -43,6 +43,9 @@ async function main() {
           send(`Some node is not running :: \n${data}`)
           return [false, "SOME NODE NOT RUNNING", true]
         }
+
+        console.log("\n===============", data, "\n=================")
+
         return [true]
       } catch (err) {
         console.log("error parse std ", err)
